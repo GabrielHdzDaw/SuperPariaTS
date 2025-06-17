@@ -11,6 +11,13 @@
     border-radius: 10px;
 }
 
+#appContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 #playArea {
     display: grid;
     grid-template-columns: repeat(4, 120px);
