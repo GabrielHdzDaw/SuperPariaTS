@@ -2,6 +2,7 @@ precision mediump float;
 
 uniform vec3 iResolution;
 uniform float iTime;
+uniform vec2 iMouse;
 
 #define SPIN_ROTATION -2.0
 #define SPIN_SPEED 7.0
@@ -54,7 +55,12 @@ vec4 effect(vec2 screenSize, vec2 screen_coords) {
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
-    fragColor = effect(iResolution.xy, uv * iResolution.xy);
+
+    // Efecto parallax con el mouse
+    vec2 mouseOffset = (iMouse / iResolution.xy - 0.5) * 0.005;
+    vec2 displacedCoord = (uv - mouseOffset) * iResolution.xy;
+
+    fragColor = effect(iResolution.xy, displacedCoord);
 }
 
 void main() {

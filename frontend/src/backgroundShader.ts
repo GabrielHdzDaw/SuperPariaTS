@@ -1,4 +1,9 @@
+let mouse = { x: 0, y: 0 };
 
+window.addEventListener("mousemove", (e) => {
+  mouse.x = e.clientX;
+  mouse.y = window.innerHeight - e.clientY; // Invertir Y para GL
+});
 
 export function startShaderBackground(fragShaderSrc: string) {
   const canvas = document.createElement('canvas');
@@ -77,12 +82,15 @@ export function startShaderBackground(fragShaderSrc: string) {
 
   const iResolution = gl.getUniformLocation(program, 'iResolution');
   const iTime = gl.getUniformLocation(program, 'iTime');
+  const iMouse = gl.getUniformLocation(program, 'iMouse');
   if (!iResolution) throw new Error('No se localizó iResolution');
   if (!iTime) console.warn('iTime no se encontró; asegúrate de que se usa en el shader');
+  if (!iMouse) console.warn('iMouse no se encontró; asegúrate de que se usa en el shader');
 
   function render(time: number) {
     gl.uniform3f(iResolution, canvas.width, canvas.height, 1.0);
     gl.uniform1f(iTime, time * 0.001);
+    gl.uniform2f(iMouse, mouse.x, mouse.y);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     requestAnimationFrame(render);
   }
