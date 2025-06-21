@@ -1,33 +1,15 @@
 import Card from "./models/Card";
 import { getPairs } from "./utils/CreateDeck";
+import { setupParallaxMouse } from './effects/parallax';
+import { startShaderBackground } from './backgroundShader';
+import { Button } from './components/Button';
+import fragShaderSrc from './assets/shader.frag?raw';
 
-let mouse = { x: 0, y: 0 };
 
-window.addEventListener("mousemove", (e) => {
-    mouse.x = e.clientX;
-    mouse.y = window.innerHeight - e.clientY; // Invertir Y para GL
-});
 
-const gameBoard = document.getElementById('gameBoard')!;
-if (!gameBoard) throw new Error('#gameBoard no encontrado');
-
-let smoothMouse = { x: 0, y: 0 };
-
-function updateParallax() {
-  smoothMouse.x += (mouse.x - smoothMouse.x) * 0.05;
-  smoothMouse.y += (mouse.y - smoothMouse.y) * 0.05;
-
-  const xOffset = ((smoothMouse.x / window.innerWidth) - 0.5) * -10;
-  const yOffset = ((smoothMouse.y / window.innerHeight) - 0.5) * 5;
-
-  gameBoard.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-
-  requestAnimationFrame(updateParallax);
-}
-
-updateParallax();
 
 const playArea = document.getElementById("playArea");
+const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
 const deck: Card[] = getPairs();
 
 deck.forEach((card) => {
@@ -57,7 +39,27 @@ deck.forEach((card) => {
   playArea?.appendChild(cardElement);
 });
 
-import { startShaderBackground } from './backgroundShader';
-import fragShaderSrc from './assets/shader.frag?raw';
+if (gameBoardOptions) {
+  const startButton = new Button("restart");
+  startButton.onClick = () => {
+    console.log("Game reset");
+    // Aquí puedes agregar la lógica para iniciar el juego
+  };
+  startButton.render(gameBoardOptions);
+
+  const resetButton = new Button("main menu");
+  resetButton.onClick = () => {
+    console.log("Main menu");
+    // Aquí puedes agregar la lógica para reiniciar el juego
+  };
+  resetButton.render(gameBoardOptions);
+  const timer = document.createElement("span");
+  timer.className = "timer";
+  timer.textContent = "TIME: 00:00";
+  gameBoardOptions.appendChild(timer);
+}
+
+setupParallaxMouse('gameBoard');
+
 
 startShaderBackground(fragShaderSrc);

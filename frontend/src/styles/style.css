@@ -17,7 +17,6 @@
     font-weight: 400;
     font-style: normal;
     user-select: none;
-    font-size: 50px;
 }
 
 html,
@@ -77,6 +76,12 @@ canvas#shader-canvas {
     transform: rotateY(180deg);
 }
 
+
+.shiny {
+    overflow: hidden;
+    z-index: 1;
+}
+
 .shiny:after {
     content: "";
     position: absolute;
@@ -93,19 +98,29 @@ canvas#shader-canvas {
     pointer-events: none;
 }
 
+
 @keyframes slideDownRight {
     0% {
-        top: -200px;
-        /* Comienza fuera del contenedor */
-        left: -70px;
-        /* Comienza fuera del contenedor */
+        transform: translateX(0) skewX(-30deg);
     }
 
     100% {
-        top: 100%;
-        /* Se desplaza hacia abajo */
-        left: 100%;
-        /* Se desplaza hacia la derecha */
+        transform: translateX(200px) skewX(-30deg);
+    }
+}
+
+@keyframes shine {
+    0% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+
+    50% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 1),
+            0 0 30px rgba(255, 255, 255, 1);
+    }
+
+    100% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
     }
 }
 
@@ -127,7 +142,24 @@ canvas#shader-canvas {
 
 .gameboard-options {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     gap: 20px;
+}
+
+.button {
+    font-size: 40px;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.button:hover {
+    color: #27dbb1;
+    transition: color 0.2s ease-in-out;
+}
+
+.timer {
+    font-size: 40px;
+
+    right: 10%;
 }
