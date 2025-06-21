@@ -47,6 +47,7 @@ canvas#shader-canvas {
     cursor: pointer;
     border-radius: 10px;
     perspective: 1000px;
+    animation: deal 0.5s forwards;
 }
 
 .card-inner {
@@ -122,6 +123,13 @@ canvas#shader-canvas {
     100% {
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
     }
+}
+
+@keyframes deal {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Containers and such */

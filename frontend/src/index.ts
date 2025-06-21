@@ -3,6 +3,7 @@ import { getPairs } from "./utils/CreateDeck";
 import { setupParallaxMouse } from './effects/parallax';
 import { startShaderBackground } from './backgroundShader';
 import { Button } from './components/Button';
+import { sounds } from './audio/audioManager';
 import fragShaderSrc from './assets/shader.frag?raw';
 
 
