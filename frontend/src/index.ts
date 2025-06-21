@@ -3,7 +3,7 @@ import { getPairs } from "./utils/CreateDeck";
 import { setupParallaxMouse } from './effects/parallax';
 import { startShaderBackground } from './backgroundShader';
 import { Button } from './components/Button';
-import { sounds } from './audio/audioManager';
+import { playSound } from './audio/audioManager';
 import fragShaderSrc from './assets/shader.frag?raw';
 
 
@@ -34,6 +34,7 @@ deck.forEach((card) => {
 
   cardElement.addEventListener("click", () => {
     card.flip();
+    playSound.flip();
     cardElement.classList.toggle("flipped");
   });
 
