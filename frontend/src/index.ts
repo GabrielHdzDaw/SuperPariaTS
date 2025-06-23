@@ -1,4 +1,5 @@
 import Card from "./models/Card";
+import { CardComponent } from './components/CardComponent';
 import { getPairs } from "./utils/CreateDeck";
 import { setupParallaxMouse } from './effects/parallax';
 import { startShaderBackground } from './backgroundShader';
@@ -6,55 +7,104 @@ import { Button } from './components/Button';
 import { playSound } from './audio/audioManager';
 import fragShaderSrc from './assets/shader.frag?raw';
 
-
-
-
 const playArea = document.getElementById("playArea");
 const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
-const deck: Card[] = getPairs();
+let deck: Card[] = getPairs();
+let flippedCards: CardComponent[] = [];
+let lockBoard = false;
+let matchedPairs = 0;
+let gameComponents: CardComponent[] = [];
 
-deck.forEach((card) => {
-  const cardElement = document.createElement("div");
-  cardElement.className = "card";
+function createGameBoard() {
+  deck.forEach((card) => {
+    const component = new CardComponent(card, (clickedComponent) => {
+      // Prevenir clicks si el tablero está bloqueado, la carta ya está en flippedCards o ya hizo match
+      if (lockBoard || flippedCards.includes(clickedComponent) || clickedComponent.isMatched()) return;
 
-  const cardInner = document.createElement("div");
-  cardInner.className = "card-inner";
+      clickedComponent.flip();
 
-  const cardFront = document.createElement("div");
-  cardFront.className = "card-front";
-  cardFront.style.backgroundImage = `url(${card.frontImage})`;
+      flippedCards.push(clickedComponent);
 
-  const cardBack = document.createElement("div");
-  cardBack.className = "card-back";
-  cardBack.style.backgroundImage = `url(${card.backImage})`;
+      if (flippedCards.length === 2) {
+        lockBoard = true;
 
-  cardInner.appendChild(cardFront);
-  cardInner.appendChild(cardBack);
-  cardElement.appendChild(cardInner);
+        const [first, second] = flippedCards;
 
-  cardElement.addEventListener("click", () => {
-    card.flip();
-    playSound.flip();
-    cardElement.classList.toggle("flipped");
+        if (first.getCard().isMatch(second.getCard())) {
+          // Match encontrado
+          console.log("Match found!");
+
+          // Marcar ambas cartas como matched
+          first.setMatched(true);
+          second.setMatched(true);
+
+          matchedPairs++;
+
+          // Limpiar array y desbloquear tablero
+          flippedCards.length = 0;
+          lockBoard = false;
+
+          // Verificar si el juego terminó
+          if (matchedPairs === deck.length / 2) {
+            setTimeout(() => {
+              alert("¡Felicitaciones! Has completado el juego.");
+            }, 500);
+          }
+        } else {
+          // No hay match
+          console.log("No match");
+
+          setTimeout(() => {
+            first.flip();
+            second.flip();
+            flippedCards.length = 0;
+            lockBoard = false;
+          }, 1000);
+        }
+      }
+    });
+
+    gameComponents.push(component);
+    playArea?.appendChild(component.element);
   });
+}
 
-  playArea?.appendChild(cardElement);
-});
+function resetGame() {
+  console.log("Resetting game...");
+
+  // Limpiar el área de juego
+  if (playArea) {
+    playArea.innerHTML = '';
+  }
+
+  // Resetear variables del juego
+  flippedCards.length = 0;
+  lockBoard = false;
+  matchedPairs = 0;
+  gameComponents.length = 0;
+
+  // Crear nuevo deck y recrear el tablero
+  deck = getPairs();
+  createGameBoard();
+}
+
+// Inicializar el juego
+createGameBoard();
 
 if (gameBoardOptions) {
   const startButton = new Button("restart");
   startButton.onClick = () => {
-    console.log("Game reset");
-    // Aquí puedes agregar la lógica para iniciar el juego
+    resetGame();
   };
   startButton.render(gameBoardOptions);
 
   const resetButton = new Button("main menu");
   resetButton.onClick = () => {
     console.log("Main menu");
-    // Aquí puedes agregar la lógica para reiniciar el juego
+    // Aquí puedes agregar la lógica para ir al menú principal
   };
   resetButton.render(gameBoardOptions);
+
   const timer = document.createElement("span");
   timer.className = "timer";
   timer.textContent = "TIME: 00:00";
@@ -62,6 +112,4 @@ if (gameBoardOptions) {
 }
 
 setupParallaxMouse('gameBoard');
-
-
 startShaderBackground(fragShaderSrc);

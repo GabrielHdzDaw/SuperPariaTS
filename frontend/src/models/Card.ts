@@ -1,9 +1,11 @@
+import { playSound } from '../audio/audioManager';
 export default class Card {
     private static readonly DEFAULT_BACK_IMAGE = "./src/assets/images/cards1/reverse.png";
     public readonly suit: string;
     public readonly value: string;
     public readonly frontImage: string;
     public isFlipped: boolean;
+    private matched: boolean = false;
 
     constructor(suit: string, value: string, frontImage: string, isFlipped: boolean = false) {
         this.suit = suit;
@@ -13,7 +15,10 @@ export default class Card {
     }
 
     flip(): void {
-        this.isFlipped = !this.isFlipped;
+        if (!this.matched) {  // No voltear si ya está emparejada
+            this.isFlipped = !this.isFlipped;
+            playSound.flip();
+        }
     }
 
     get currentImage(): string {
@@ -26,5 +31,15 @@ export default class Card {
 
     isMatch(otherCard: Card): boolean {
         return this.value === otherCard.value && this.suit === otherCard.suit;
+    }
+
+    isMatched(): boolean {
+        return this.matched;
+    }
+
+    setMatched(matched: boolean): void {
+        this.matched = matched;
+        // ¡REMOVIDO! No forzar isFlipped = false
+        // Las cartas matched deben mantener su estado visual volteado
     }
 }

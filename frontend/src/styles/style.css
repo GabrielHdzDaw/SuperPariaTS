@@ -81,6 +81,7 @@ canvas#shader-canvas {
 .shiny {
     overflow: hidden;
     z-index: 1;
+    cursor: unset;
 }
 
 .shiny:after {
@@ -91,9 +92,9 @@ canvas#shader-canvas {
     left: -70px;
     /* Comienza fuera del contenedor */
     background-color: rgba(255, 255, 255, 0.3);
-    height: 300px;
+    height: 500px;
     width: 50px;
-    animation: slideDownRight 1s infinite;
+    animation: slideDownRight 0.7s infinite;
     transform: skewX(-30deg);
     z-index: 2;
     pointer-events: none;
@@ -106,7 +107,7 @@ canvas#shader-canvas {
     }
 
     100% {
-        transform: translateX(200px) skewX(-30deg);
+        transform: translateX(300px) skewX(-30deg);
     }
 }
 
