@@ -6,7 +6,8 @@ import { startShaderBackground } from './backgroundShader';
 import { Button } from './components/Button';
 import { playSound } from './audio/audioManager';
 
-import fragShaderSrc from './assets/shader.frag?raw';
+import fragShaderSrc from './assets/backgroundShader.frag?raw';
+
 
 const playArea = document.getElementById("playArea");
 const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
@@ -16,16 +17,49 @@ let lockBoard = false;
 let matchedPairs = 0;
 let gameComponents: CardComponent[] = [];
 
+function dealCards(gameComponents: CardComponent[]): void {
+  gameComponents.forEach((component, index) => {
+    setTimeout(() => {
+      component.element.style.transform = "scale(1.2)";
+      component.element.style.visibility = "visible";
+      component.element.style.opacity = "1";
+      component.element.style.pointerEvents = "auto";
+      playSound.flip();
 
+      setTimeout(() => {
+        component.element.style.transform = "scale(1)";
+      }, 200);
+    }, index * 100);
+  });
 
-function createGameBoard() {
+  const totalDelay = gameComponents.length * 100 + 300;
+
+  setTimeout(() => {
+    // Forzar reflow y esperar al siguiente frame
+    requestAnimationFrame(() => {
+      gameComponents.forEach((component) => {
+        component.flip();
+      });
+      playSound.flip();
+
+      setTimeout(() => {
+        gameComponents.forEach((component) => {
+          component.flip();
+        });
+      }, 1000);
+    });
+  }, totalDelay);
+}
+
+function createGameBoard(): void {
   deck.forEach((card) => {
-    const component = new CardComponent(card, (clickedComponent) => {
-      if (lockBoard || flippedCards.includes(clickedComponent) || clickedComponent.isMatched()) return;
+    const cardComponent = new CardComponent(card, (clickedCardComponent) => {
+      if (lockBoard || flippedCards.includes(clickedCardComponent) || clickedCardComponent.isMatched()) return;
 
-      clickedComponent.flip();
+      clickedCardComponent.flip();
+      playSound.flip();
 
-      flippedCards.push(clickedComponent);
+      flippedCards.push(clickedCardComponent);
 
       if (flippedCards.length === 2) {
         lockBoard = true;
@@ -34,7 +68,7 @@ function createGameBoard() {
 
         if (first.getCard().isMatch(second.getCard())) {
           // Match encontrado
-          
+
           console.log("Match found!");
 
           // Marcar ambas cartas como matched
@@ -67,12 +101,18 @@ function createGameBoard() {
       }
     });
 
-    gameComponents.push(component);
-    playArea?.appendChild(component.element);
+    gameComponents.push(cardComponent);
+    playArea?.appendChild(cardComponent.element);
   });
+  gameComponents.forEach((component) => {
+    component.element.style.visibility = "hidden"; // antes era "none" (inválido)
+    component.element.style.opacity = "0";         // mejor que display: none
+    component.element.style.pointerEvents = "none";
+  });
+  dealCards(gameComponents);
 }
 
-function resetGame() {
+function resetGame(): void {
   console.log("Resetting game...");
 
   // Limpiar el área de juego
@@ -91,8 +131,11 @@ function resetGame() {
   createGameBoard();
 }
 
-// Inicializar el juego
-createGameBoard();
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Creando el tablero de juego...");
+  createGameBoard();
+  console.log("Tablero de juego creado"); // Esto primero crea las cartas
+});
 
 if (gameBoardOptions) {
   const startButton = new Button("restart");

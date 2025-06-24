@@ -17,7 +17,7 @@ export default class Card {
     flip(): void {
         if (!this.matched) {  // No voltear si ya está emparejada
             this.isFlipped = !this.isFlipped;
-            playSound.flip();
+            
         }
     }
 
