@@ -1,4 +1,6 @@
 import Card from '../models/Card';
+import { playSound } from '../audio/audioManager';
+import { flashScreen } from "../effects/flash";
 
 export class CardComponent {
     public readonly element: HTMLDivElement;
@@ -67,10 +69,12 @@ export class CardComponent {
     public setMatched(matched: boolean): void {
         this.card.setMatched(matched);
         if (matched) {
+            playSound.matchPair(0.1);
             this.element.classList.add('matched');
             this.element.classList.add('flipped');
             this.element.classList.add('shiny');
-            // Opcional: agregar efectos visuales para cartas matched
+            flashScreen();
+
         } else {
             this.element.classList.remove('matched');
             this.element.classList.remove('flipped');

@@ -5,6 +5,7 @@ import { setupParallaxMouse } from './effects/parallax';
 import { startShaderBackground } from './backgroundShader';
 import { Button } from './components/Button';
 import { playSound } from './audio/audioManager';
+
 import fragShaderSrc from './assets/shader.frag?raw';
 
 const playArea = document.getElementById("playArea");
@@ -15,10 +16,11 @@ let lockBoard = false;
 let matchedPairs = 0;
 let gameComponents: CardComponent[] = [];
 
+
+
 function createGameBoard() {
   deck.forEach((card) => {
     const component = new CardComponent(card, (clickedComponent) => {
-      // Prevenir clicks si el tablero está bloqueado, la carta ya está en flippedCards o ya hizo match
       if (lockBoard || flippedCards.includes(clickedComponent) || clickedComponent.isMatched()) return;
 
       clickedComponent.flip();
@@ -32,6 +34,7 @@ function createGameBoard() {
 
         if (first.getCard().isMatch(second.getCard())) {
           // Match encontrado
+          
           console.log("Match found!");
 
           // Marcar ambas cartas como matched

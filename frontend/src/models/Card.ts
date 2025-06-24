@@ -39,7 +39,5 @@ export default class Card {
 
     setMatched(matched: boolean): void {
         this.matched = matched;
-        // ¡REMOVIDO! No forzar isFlipped = false
-        // Las cartas matched deben mantener su estado visual volteado
     }
 }
