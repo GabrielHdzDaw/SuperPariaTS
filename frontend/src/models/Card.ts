@@ -14,8 +14,10 @@ export default class Card {
         this.isFlipped = isFlipped;
     }
 
-    flip(force: boolean = false): void {
-        if (!force && this.matched) return;
+    flip(force?: boolean): void {
+        if (force) {
+            this.isFlipped = force;
+        }
         this.isFlipped = !this.isFlipped;
     }
 
@@ -37,5 +39,9 @@ export default class Card {
 
     setMatched(matched: boolean): void {
         this.matched = matched;
+    }
+
+    copy(): Card {
+        return new Card(this.suit, this.value, this.frontImage, this.isFlipped);
     }
 }

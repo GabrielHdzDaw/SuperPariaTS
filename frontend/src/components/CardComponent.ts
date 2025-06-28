@@ -40,9 +40,7 @@ export class CardComponent {
         return cardElement;
     }
 
-    public flip(force: boolean = false): void {
-        if (!force && this.card.isMatched()) return;
-
+    public flip(force?: boolean): void {
         this.card.flip(force);
         this.updateVisualState();
     }

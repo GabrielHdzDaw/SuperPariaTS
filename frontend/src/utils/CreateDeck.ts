@@ -20,18 +20,18 @@ type playingDeck = [
     Card, Card, Card, Card,
     Card, Card, Card, Card,
     Card, Card, Card, Card,
-    Card, Card, Card, Card
+    Card, Card, Card, Card,
 ];
 
 export function getPairs(): Card[] {
     const deck: Card[] = createDeck();
     deck.sort(() => Math.random() - 0.5);
-
+    
     const cards: playingDeck = [
-        deck[0], deck[0], deck[1], deck[1],
-        deck[2], deck[2], deck[3], deck[3],
-        deck[4], deck[4], deck[5], deck[5],
-        deck[6], deck[6], deck[7], deck[7],
+        deck[0], deck[0].copy(), deck[1], deck[1].copy(),
+        deck[2], deck[2].copy(), deck[3], deck[3].copy(),
+        deck[4], deck[4].copy(), deck[5], deck[5].copy(),
+        deck[6], deck[6].copy(), deck[7], deck[7].copy(),
     ];
     cards.sort(() => Math.random() - 0.5);
 

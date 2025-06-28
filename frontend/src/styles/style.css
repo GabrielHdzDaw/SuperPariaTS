@@ -47,7 +47,10 @@ canvas#shader-canvas {
     border-radius: 10px;
     perspective: 1000px;
     animation: deal 0.5s forwards;
+    transform: scale(1.2);
 }
+
+
 
 .card-inner {
     width: 100%;
@@ -187,7 +190,7 @@ canvas#shader-canvas {
 .invisible {
     visibility: hidden;
     pointer-events: none;
-    transform: scale(1.2);
+    /* transform: scale(1.2); */
 }
 
 .disabled {

@@ -19,30 +19,31 @@ let gameComponents: CardComponent[] = [];
 
 function dealCards(gameComponents: CardComponent[]): void {
   gameComponents.forEach((component, index) => {
-    setTimeout(() => {
-      component.element.style.transform = "scale(1.2)";
-      component.element.classList.remove("invisible", "disabled");
-      component.element.style.transform = "scale(1)";
-      playSound.flip();
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        component.element.classList.remove("invisible", "disabled");
 
-      // setTimeout(() => {
-      //   component.element.style.transform = "scale(1)";
-      // }, 200);
-    }, index * 100);
+
+        playSound.flip();
+
+
+      }, index * 100);
+    });
+
   });
 
   const totalDelay = gameComponents.length * 100 + 300;
 
   setTimeout(() => {
-   
-      gameComponents.forEach((component) => component.flip(true));
-      
-      playSound.flip();
 
-      setTimeout(() => {
-        gameComponents.forEach((component) => component.flip(true));
-      }, 1000);
-   
+    gameComponents.forEach((component) => component.flip());
+
+    playSound.flip();
+
+    setTimeout(() => {
+      gameComponents.forEach((component) => component.flip());
+    }, 1000);
+
   }, totalDelay);
 }
 
@@ -50,51 +51,7 @@ function createGameBoard(): void {
   playArea!.innerHTML = ''; // Limpiar el área de juego
   deck.forEach((card) => {
     const cardComponent = new CardComponent(card, (clickedCardComponent) => {
-      if (lockBoard || flippedCards.includes(clickedCardComponent) || clickedCardComponent.isMatched()) return;
-
-      clickedCardComponent.flip();
-      playSound.flip();
-
-      flippedCards.push(clickedCardComponent);
-
-      if (flippedCards.length === 2) {
-        lockBoard = true;
-
-        const [first, second] = flippedCards;
-
-        if (first.getCard().isMatch(second.getCard())) {
-          // Match encontrado
-
-          console.log("Match found!");
-
-          // Marcar ambas cartas como matched
-          first.setMatched(true);
-          second.setMatched(true);
-
-          matchedPairs++;
-
-          // Limpiar array y desbloquear tablero
-          flippedCards.length = 0;
-          lockBoard = false;
-
-          // Verificar si el juego terminó
-          if (matchedPairs === deck.length / 2) {
-            setTimeout(() => {
-              alert("¡Felicitaciones! Has completado el juego.");
-            }, 500);
-          }
-        } else {
-          // No hay match
-          console.log("No match");
-
-          setTimeout(() => {
-            first.flip();
-            second.flip();
-            flippedCards.length = 0;
-            lockBoard = false;
-          }, 1000);
-        }
-      }
+      handleCardClick(clickedCardComponent);
     });
 
     gameComponents.push(cardComponent);
@@ -102,9 +59,59 @@ function createGameBoard(): void {
   });
   gameComponents.forEach((component) => {
     component.element.classList.add("invisible", "disabled");
-    component.element.style.transform = "scale(1)";
+    
   });
+  lockBoard = true;
   dealCards(gameComponents);
+  lockBoard = false;
+}
+
+function handleCardClick(clickedCardComponent: CardComponent): void {
+  if (lockBoard || flippedCards.includes(clickedCardComponent) || clickedCardComponent.isMatched()) return;
+
+  clickedCardComponent.flip();
+  playSound.flip();
+
+  flippedCards.push(clickedCardComponent);
+
+  if (flippedCards.length === 2) {
+    lockBoard = true;
+
+    const [first, second] = flippedCards;
+
+    if (first.getCard().isMatch(second.getCard())) {
+      // Match encontrado
+
+      console.log("Match found!");
+
+      // Marcar ambas cartas como matched
+      first.setMatched(true);
+      second.setMatched(true);
+
+      matchedPairs++;
+
+      // Limpiar array y desbloquear tablero
+      flippedCards.length = 0;
+      lockBoard = false;
+
+      // Verificar si el juego terminó
+      if (matchedPairs === deck.length / 2) {
+        setTimeout(() => {
+          alert("¡Felicitaciones! Has completado el juego.");
+        }, 500);
+      }
+    } else {
+      // No hay match
+      console.log("No match");
+
+      setTimeout(() => {
+        first.flip();
+        second.flip();
+        flippedCards.length = 0;
+        lockBoard = false;
+      }, 1000);
+    }
+  }
 }
 
 function resetGame(): void {
