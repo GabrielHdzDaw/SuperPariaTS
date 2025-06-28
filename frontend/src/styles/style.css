@@ -46,8 +46,8 @@ canvas#shader-canvas {
     cursor: pointer;
     border-radius: 10px;
     perspective: 1000px;
-    animation: deal 0.5s forwards;
-    transform: scale(1.2);
+    /* animation: deal 0.5s forwards; */
+
 }
 
 
@@ -195,4 +195,41 @@ canvas#shader-canvas {
 
 .disabled {
     pointer-events: none;
+}
+
+
+@keyframes closeCircle {
+  0% {
+    clip-path: circle(100%);
+  }
+  100% {
+    clip-path: circle(0%);
+  }
+}
+
+.close-circle {
+  animation: closeCircle 0.5s forwards;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes openCircle {
+  0% {
+    clip-path: circle(0%);
+  }
+  100% {
+    clip-path: circle(100%);
+  }
+}
+
+.open-circle {
+  animation: openCircle 1s forwards;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

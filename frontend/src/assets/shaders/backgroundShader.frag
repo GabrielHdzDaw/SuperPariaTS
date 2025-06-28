@@ -13,7 +13,7 @@ uniform vec2 iMouse;
 #define CONTRAST 3.5
 #define LIGTHING 0.4
 #define SPIN_AMOUNT 0.25
-#define PIXEL_FILTER 745.0
+#define PIXEL_FILTER 2000.0
 #define SPIN_EASE 1.0
 #define PI 3.14159265359
 #define IS_ROTATE false

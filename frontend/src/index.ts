@@ -5,8 +5,9 @@ import { setupParallaxMouse } from './effects/parallax';
 import { startShaderBackground } from './backgroundShader';
 import { Button } from './components/Button';
 import { playSound } from './audio/audioManager';
+import { circleTransition } from './effects/circle';
 
-import fragShaderSrc from './assets/backgroundShader.frag?raw';
+import fragShaderSrc from './assets/shaders/backgroundShader.frag?raw';
 
 
 const playArea = document.getElementById("playArea") as HTMLDivElement | null;
@@ -19,17 +20,12 @@ let gameComponents: CardComponent[] = [];
 
 function dealCards(gameComponents: CardComponent[]): void {
   gameComponents.forEach((component, index) => {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        component.element.classList.remove("invisible", "disabled");
+    setTimeout(() => {
+      component.element.classList.remove("invisible");
+      playSound.flip();
 
 
-        playSound.flip();
-
-
-      }, index * 100);
-    });
-
+    }, index * 100);
   });
 
   const totalDelay = gameComponents.length * 100 + 300;
@@ -41,29 +37,38 @@ function dealCards(gameComponents: CardComponent[]): void {
     playSound.flip();
 
     setTimeout(() => {
-      gameComponents.forEach((component) => component.flip());
+
+      gameComponents.forEach((component) => {
+        component.flip();
+        component.element.classList.remove("disabled");
+      });
+
+
     }, 1000);
 
   }, totalDelay);
+
 }
 
 function createGameBoard(): void {
-  playArea!.innerHTML = ''; // Limpiar el área de juego
-  deck.forEach((card) => {
-    const cardComponent = new CardComponent(card, (clickedCardComponent) => {
-      handleCardClick(clickedCardComponent);
-    });
+  circleTransition().then(() => {
+    playArea!.innerHTML = ''; // Limpiar el área de juego
+    deck.forEach((card) => {
+      const cardComponent = new CardComponent(card, (clickedCardComponent) => {
+        handleCardClick(clickedCardComponent);
+      });
 
-    gameComponents.push(cardComponent);
-    playArea?.appendChild(cardComponent.element);
+      gameComponents.push(cardComponent);
+      playArea?.appendChild(cardComponent.element);
+    });
+    gameComponents.forEach((component) => {
+      component.element.classList.add("invisible", "disabled");
+
+    });
+    dealCards(gameComponents);
+  }).catch((error) => {
+    console.error("Error al crear el tablero de juego:", error);
   });
-  gameComponents.forEach((component) => {
-    component.element.classList.add("invisible", "disabled");
-    
-  });
-  lockBoard = true;
-  dealCards(gameComponents);
-  lockBoard = false;
 }
 
 function handleCardClick(clickedCardComponent: CardComponent): void {
