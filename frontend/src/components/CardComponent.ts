@@ -40,11 +40,10 @@ export class CardComponent {
         return cardElement;
     }
 
-    public flip() {
-        if (this.card.isMatched()) return; // No hacer nada si ya está emparejada
+    public flip(force: boolean = false): void {
+        if (!force && this.card.isMatched()) return;
 
-        this.card.flip(); // Cambia el estado lógico (isFlipped)
-        // Sincronizar el estado visual con el lógico
+        this.card.flip(force);
         this.updateVisualState();
     }
 

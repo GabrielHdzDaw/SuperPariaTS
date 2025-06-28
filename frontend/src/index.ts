@@ -9,7 +9,7 @@ import { playSound } from './audio/audioManager';
 import fragShaderSrc from './assets/backgroundShader.frag?raw';
 
 
-const playArea = document.getElementById("playArea");
+const playArea = document.getElementById("playArea") as HTMLDivElement | null;
 const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
 let deck: Card[] = getPairs();
 let flippedCards: CardComponent[] = [];
@@ -21,37 +21,33 @@ function dealCards(gameComponents: CardComponent[]): void {
   gameComponents.forEach((component, index) => {
     setTimeout(() => {
       component.element.style.transform = "scale(1.2)";
-      component.element.style.visibility = "visible";
-      component.element.style.opacity = "1";
-      component.element.style.pointerEvents = "auto";
+      component.element.classList.remove("invisible", "disabled");
+      component.element.style.transform = "scale(1)";
       playSound.flip();
 
-      setTimeout(() => {
-        component.element.style.transform = "scale(1)";
-      }, 200);
+      // setTimeout(() => {
+      //   component.element.style.transform = "scale(1)";
+      // }, 200);
     }, index * 100);
   });
 
   const totalDelay = gameComponents.length * 100 + 300;
 
   setTimeout(() => {
-    // Forzar reflow y esperar al siguiente frame
-    requestAnimationFrame(() => {
-      gameComponents.forEach((component) => {
-        component.flip();
-      });
+   
+      gameComponents.forEach((component) => component.flip(true));
+      
       playSound.flip();
 
       setTimeout(() => {
-        gameComponents.forEach((component) => {
-          component.flip();
-        });
+        gameComponents.forEach((component) => component.flip(true));
       }, 1000);
-    });
+   
   }, totalDelay);
 }
 
 function createGameBoard(): void {
+  playArea!.innerHTML = ''; // Limpiar el área de juego
   deck.forEach((card) => {
     const cardComponent = new CardComponent(card, (clickedCardComponent) => {
       if (lockBoard || flippedCards.includes(clickedCardComponent) || clickedCardComponent.isMatched()) return;
@@ -105,9 +101,8 @@ function createGameBoard(): void {
     playArea?.appendChild(cardComponent.element);
   });
   gameComponents.forEach((component) => {
-    component.element.style.visibility = "hidden"; // antes era "none" (inválido)
-    component.element.style.opacity = "0";         // mejor que display: none
-    component.element.style.pointerEvents = "none";
+    component.element.classList.add("invisible", "disabled");
+    component.element.style.transform = "scale(1)";
   });
   dealCards(gameComponents);
 }

@@ -4,7 +4,7 @@ export default class Card {
     public readonly suit: string;
     public readonly value: string;
     public readonly frontImage: string;
-    public isFlipped: boolean;
+    public isFlipped: boolean = false;
     private matched: boolean = false;
 
     constructor(suit: string, value: string, frontImage: string, isFlipped: boolean = false) {
@@ -14,11 +14,9 @@ export default class Card {
         this.isFlipped = isFlipped;
     }
 
-    flip(): void {
-        if (!this.matched) {  // No voltear si ya está emparejada
-            this.isFlipped = !this.isFlipped;
-            
-        }
+    flip(force: boolean = false): void {
+        if (!force && this.matched) return;
+        this.isFlipped = !this.isFlipped;
     }
 
     get currentImage(): string {

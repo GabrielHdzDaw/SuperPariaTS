@@ -126,10 +126,10 @@ canvas#shader-canvas {
 }
 
 @keyframes deal {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Containers and such */
@@ -173,7 +173,7 @@ canvas#shader-canvas {
 }
 
 
-.flash{
+.flash {
     background-color: white;
     position: fixed;
     top: 0;
@@ -184,6 +184,12 @@ canvas#shader-canvas {
     display: none;
 }
 
+.invisible {
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(1.2);
+}
+
 .disabled {
-  pointer-events: none;
+    pointer-events: none;
 }
