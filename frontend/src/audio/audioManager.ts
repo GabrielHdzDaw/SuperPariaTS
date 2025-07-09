@@ -36,7 +36,7 @@ const soundUrls = {
     godlikeCombo: godlikeComboSoundUrl,
 } as const;
 
-type SoundName = keyof typeof soundUrls;
+export type SoundName = keyof typeof soundUrls;
 
 type PlaySound = {
     [K in SoundName]: (volume?: number) => void;

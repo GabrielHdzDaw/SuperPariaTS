@@ -112,7 +112,7 @@ function handleCardClick(clickedCardComponent: CardComponent): void {
           }
 
           clearInterval(countdownInterval);
-          
+
           endGame();
         }, 500);
       }
@@ -156,7 +156,10 @@ function endGame(): void {
 
 function resetGame(): void {
   console.log("Resetting game...");
-  clearInterval(countdownInterval);
+  if (countdownInterval !== undefined) {
+    clearInterval(countdownInterval);
+  }
+  
   timeLeft = TIME_LIMIT;
   if (playArea) {
     playArea.innerHTML = '';
@@ -169,13 +172,12 @@ function resetGame(): void {
   if (blur) {
     blur.style.display = "none";
   }
-  // Crear nuevo deck y recrear el tablero
+
   deck = getPairs();
   createGameBoard();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Creando el tablero de juego...");
   createGameBoard();
 });
 
@@ -196,8 +198,6 @@ if (gameBoardOptions) {
   timer.className = "timer";
   timer.textContent = `TIME: ${timeLeft}`;
   gameBoardOptions.appendChild(timer);
-
-
 }
 
 setupParallaxMouse('gameBoard');

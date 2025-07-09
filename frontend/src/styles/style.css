@@ -169,6 +169,10 @@ canvas#shader-canvas {
     cursor: pointer;
     transition: color 0.2s ease-in-out;
     transition: transform 0.1s ease-in-out;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+        1px 1px 0 #000, -3px -3px 0 #fff, 3px -3px 0 #fff,
+        -3px 3px 0 #fff, 3px 3px 0 #fff, -3px 0 0 #fff,
+        3px 0 0 #fff, 0 -3px 0 #fff, 0 3px 0 #fff, 5px 5px 7px #000;
 }
 
 .button:hover {
@@ -253,4 +257,22 @@ canvas#shader-canvas {
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+.start-title,
+.win-title,
+.lose-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    text-align: center;
+    z-index: 1000;
+    color: #76a697;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+        1px 1px 0 #000, -3px -3px 0 #fff, 3px -3px 0 #fff,
+        -3px 3px 0 #fff, 3px 3px 0 #fff, -3px 0 0 #fff,
+        3px 0 0 #fff, 0 -3px 0 #fff, 0 3px 0 #fff, 5px 5px 7px #000;
+    display: none;
 }
