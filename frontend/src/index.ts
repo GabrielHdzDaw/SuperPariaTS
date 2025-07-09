@@ -9,14 +9,21 @@ import { circleTransition } from './effects/circle';
 
 import fragShaderSrc from './assets/shaders/backgroundShader.frag?raw';
 
+const TIME_LIMIT = 60; // Tiempo límite en segundos
 
 const playArea = document.getElementById("playArea") as HTMLDivElement | null;
+const blur = document.querySelector(".blur") as HTMLDivElement | null;
 const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
+const timerElement = document.querySelector(".timer") as HTMLSpanElement | null;
 let deck: Card[] = getPairs();
 let flippedCards: CardComponent[] = [];
 let lockBoard = false;
 let matchedPairs = 0;
 let gameComponents: CardComponent[] = [];
+let timeLeft = TIME_LIMIT; // Tiempo inicial en segundos
+let countdownInterval: number | undefined;
+
+
 
 function dealCards(gameComponents: CardComponent[]): void {
   gameComponents.forEach((component, index) => {
@@ -40,19 +47,21 @@ function dealCards(gameComponents: CardComponent[]): void {
 
       gameComponents.forEach((component) => {
         component.flip();
+
         component.element.classList.remove("disabled");
+
       });
 
-
+      playSound.flip();
     }, 1000);
-
+    startCountdown();
   }, totalDelay);
 
 }
 
 function createGameBoard(): void {
   circleTransition().then(() => {
-    playArea!.innerHTML = ''; // Limpiar el área de juego
+    playArea!.innerHTML = '';
     deck.forEach((card) => {
       const cardComponent = new CardComponent(card, (clickedCardComponent) => {
         handleCardClick(clickedCardComponent);
@@ -66,6 +75,7 @@ function createGameBoard(): void {
 
     });
     dealCards(gameComponents);
+
   }).catch((error) => {
     console.error("Error al crear el tablero de juego:", error);
   });
@@ -85,28 +95,28 @@ function handleCardClick(clickedCardComponent: CardComponent): void {
     const [first, second] = flippedCards;
 
     if (first.getCard().isMatch(second.getCard())) {
-      // Match encontrado
-
       console.log("Match found!");
 
-      // Marcar ambas cartas como matched
       first.setMatched(true);
       second.setMatched(true);
 
       matchedPairs++;
 
-      // Limpiar array y desbloquear tablero
       flippedCards.length = 0;
       lockBoard = false;
 
-      // Verificar si el juego terminó
       if (matchedPairs === deck.length / 2) {
         setTimeout(() => {
-          alert("¡Felicitaciones! Has completado el juego.");
+          if (blur) {
+            blur.style.display = "block";
+          }
+
+          clearInterval(countdownInterval);
+          
+          endGame();
         }, 500);
       }
     } else {
-      // No hay match
       console.log("No match");
 
       setTimeout(() => {
@@ -114,25 +124,51 @@ function handleCardClick(clickedCardComponent: CardComponent): void {
         second.flip();
         flippedCards.length = 0;
         lockBoard = false;
-      }, 1000);
+      }, 500);
     }
   }
 }
 
+function startCountdown(): void {
+  const timerElement = document.querySelector(".timer") as HTMLSpanElement | null;
+  if (!timerElement) return;
+
+  if (countdownInterval !== undefined) {
+    clearInterval(countdownInterval);
+  }
+
+  timerElement.textContent = `TIME: ${timeLeft}`;
+
+  countdownInterval = window.setInterval(() => {
+    timeLeft--;
+    timerElement.textContent = `TIME: ${timeLeft}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      endGame();
+    }
+  }, 1000);
+}
+
+function endGame(): void {
+  lockBoard = true;
+}
+
 function resetGame(): void {
   console.log("Resetting game...");
-
-  // Limpiar el área de juego
+  clearInterval(countdownInterval);
+  timeLeft = TIME_LIMIT;
   if (playArea) {
     playArea.innerHTML = '';
   }
 
-  // Resetear variables del juego
   flippedCards.length = 0;
   lockBoard = false;
   matchedPairs = 0;
   gameComponents.length = 0;
-
+  if (blur) {
+    blur.style.display = "none";
+  }
   // Crear nuevo deck y recrear el tablero
   deck = getPairs();
   createGameBoard();
@@ -141,7 +177,6 @@ function resetGame(): void {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Creando el tablero de juego...");
   createGameBoard();
-  console.log("Tablero de juego creado"); // Esto primero crea las cartas
 });
 
 if (gameBoardOptions) {
@@ -154,14 +189,15 @@ if (gameBoardOptions) {
   const resetButton = new Button("main menu");
   resetButton.onClick = () => {
     console.log("Main menu");
-    // Aquí puedes agregar la lógica para ir al menú principal
   };
   resetButton.render(gameBoardOptions);
 
   const timer = document.createElement("span");
   timer.className = "timer";
-  timer.textContent = "TIME: 00:00";
+  timer.textContent = `TIME: ${timeLeft}`;
   gameBoardOptions.appendChild(timer);
+
+
 }
 
 setupParallaxMouse('gameBoard');
