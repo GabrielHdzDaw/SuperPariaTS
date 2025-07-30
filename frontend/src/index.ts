@@ -29,6 +29,7 @@ function dealCards(gameComponents: CardComponent[]): void {
   gameComponents.forEach((component, index) => {
     setTimeout(() => {
       component.element.classList.remove("invisible");
+      component.element.style.animation = 'deal 0.5s forwards';
       playSound.flip();
 
 
@@ -65,6 +66,7 @@ function createGameBoard(): void {
     deck.forEach((card) => {
       const cardComponent = new CardComponent(card, (clickedCardComponent) => {
         handleCardClick(clickedCardComponent);
+         // Stop the animation after the first click
       });
 
       gameComponents.push(cardComponent);

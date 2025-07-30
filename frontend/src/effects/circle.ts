@@ -5,8 +5,7 @@ type TransitionType = 'open' | 'close';
 function playTransition(type: TransitionType): Promise<void> {
   return new Promise((resolve) => {
     html.classList.remove('open-circle', 'close-circle');
-    void html.offsetWidth; // fuerza reflow
-
+    void html.offsetWidth;
     const handleAnimationEnd = () => {
       html.removeEventListener('animationend', handleAnimationEnd);
       resolve();
