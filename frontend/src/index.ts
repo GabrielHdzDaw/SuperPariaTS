@@ -7,9 +7,21 @@ import { Button } from './components/Button';
 import { playSound } from './audio/audioManager';
 import { circleTransition } from './effects/circle';
 
-import fragShaderSrc from './assets/shaders/backgroundShader.frag?raw';
 
-const TIME_LIMIT = 60; // Tiempo límite en segundos
+const shaderModules = import.meta.glob('./assets/shaders/*.frag', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+
+const shaderMap: Record<string, string> = {};
+
+for (const path in shaderModules) {
+  const name = path.split('/').pop()?.replace('.frag', '');
+  if (name) shaderMap[name] = shaderModules[path] as string;
+}
+
+const TIME_LIMIT = 63; // Tiempo límite en segundos
 
 const playArea = document.getElementById("playArea") as HTMLDivElement | null;
 const blur = document.querySelector(".blur") as HTMLDivElement | null;
@@ -55,7 +67,7 @@ function dealCards(gameComponents: CardComponent[]): void {
 
       playSound.flip();
     }, 1000);
-    startCountdown();
+    
   }, totalDelay);
 
 }
@@ -77,6 +89,7 @@ function createGameBoard(): void {
 
     });
     dealCards(gameComponents);
+    startCountdown();
 
   }).catch((error) => {
     console.error("Error al crear el tablero de juego:", error);
@@ -203,4 +216,7 @@ if (gameBoardOptions) {
 }
 
 setupParallaxMouse('gameBoard');
+
+const currentShader = 'protoplasmShader';
+const fragShaderSrc = shaderMap[currentShader];
 startShaderBackground(fragShaderSrc);
