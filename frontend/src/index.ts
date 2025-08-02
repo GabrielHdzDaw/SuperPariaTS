@@ -26,7 +26,9 @@ const TIME_LIMIT = 63; // Tiempo límite en segundos
 const playArea = document.getElementById("playArea") as HTMLDivElement | null;
 const blur = document.querySelector(".blur") as HTMLDivElement | null;
 const gameBoardOptions = document.querySelector(".gameboard-options") as HTMLDivElement | null;
-const timerElement = document.querySelector(".timer") as HTMLSpanElement | null;
+const startTitle = document.querySelector(".start-title") as HTMLDivElement | null;
+const loseTitle = document.querySelector(".lose-title") as HTMLDivElement | null;
+const winTitle = document.querySelector(".win-title") as HTMLDivElement | null;
 let deck: Card[] = getPairs();
 let flippedCards: CardComponent[] = [];
 let lockBoard = false;
@@ -67,7 +69,7 @@ function dealCards(gameComponents: CardComponent[]): void {
 
       playSound.flip();
     }, 1000);
-    
+
   }, totalDelay);
 
 }
@@ -78,7 +80,7 @@ function createGameBoard(): void {
     deck.forEach((card) => {
       const cardComponent = new CardComponent(card, (clickedCardComponent) => {
         handleCardClick(clickedCardComponent);
-         // Stop the animation after the first click
+
       });
 
       gameComponents.push(cardComponent);
@@ -127,7 +129,7 @@ function handleCardClick(clickedCardComponent: CardComponent): void {
           }
 
           clearInterval(countdownInterval);
-
+          win();
           endGame();
         }, 500);
       }
@@ -161,6 +163,7 @@ function startCountdown(): void {
     if (timeLeft <= 0) {
       clearInterval(countdownInterval);
       endGame();
+      gameOver();
     }
   }, 1000);
 }
@@ -169,17 +172,40 @@ function endGame(): void {
   lockBoard = true;
 }
 
+function gameOver(): void {
+  console.log("Game Over");
+  if (blur) {
+    blur.style.display = "block";
+  }
+  loseTitle!.style.display = "block";
+}
+
+function win(): void {
+  console.log("You win!");
+  if (blur) {
+    blur.style.display = "block";
+  }
+  winTitle!.style.display = "block";
+}
+
+
 function resetGame(): void {
   console.log("Resetting game...");
   if (countdownInterval !== undefined) {
     clearInterval(countdownInterval);
   }
-  
+
   timeLeft = TIME_LIMIT;
   if (playArea) {
     playArea.innerHTML = '';
   }
 
+  if (loseTitle) {
+    loseTitle.style.display = "none";
+  }
+  if (winTitle) {
+    winTitle.style.display = "none";
+  }
   flippedCards.length = 0;
   lockBoard = false;
   matchedPairs = 0;
@@ -217,6 +243,6 @@ if (gameBoardOptions) {
 
 setupParallaxMouse('gameBoard');
 
-const currentShader = 'protoplasmShader';
+const currentShader = 'balatroShader2';
 const fragShaderSrc = shaderMap[currentShader];
 startShaderBackground(fragShaderSrc);
